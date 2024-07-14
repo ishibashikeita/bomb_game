@@ -1,5 +1,6 @@
 import 'package:bomb_game/View/game_screen_view.dart';
 import 'package:bomb_game/View/top_screen_view.dart';
+import 'package:bomb_game/loading_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -9,8 +10,6 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: TopScreen(),
-    );
+    return const MaterialApp(home: Loading());
   }
 }

@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bomb_game/View/game_screen_view.dart';
+import 'package:bomb_game/const.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -74,7 +75,7 @@ class _TopScreenState extends State<TopScreen> {
                         height: 30,
                         child: Center(
                           child: Text(
-                            'v1.0.0',
+                            'v${appVersion}',
                             style: GoogleFonts.reggaeOne(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,

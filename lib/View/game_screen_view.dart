@@ -1,10 +1,8 @@
 import 'dart:math';
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bomb_game/View/top_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'result_screen_view.dart';
 
 class GameScreen extends StatefulWidget {
@@ -60,31 +58,38 @@ class _GameScreenState extends State<GameScreen> {
 
     // アニメーションの持続時間に合わせて遅延させた後に結果画面に遷移
     Future.delayed(const Duration(seconds: 1), () {
-      Navigator.of(context).pop(); // 爆発エフェクトを閉じる
-      _navigateToResultScreen();
+      if (mounted) {
+        Navigator.of(context).pop(); // 爆発エフェクトを閉じる
+        _navigateToResultScreen();
+      }
     });
   }
 
   void _navigateToResultScreen() {
-    Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => ResultScreen(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          var begin = 0.0;
-          var end = 1.0;
-          var curve = Curves.easeInOut;
+    try {
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              ResultScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            var begin = 0.0;
+            var end = 1.0;
+            var curve = Curves.easeInOut;
 
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var tween =
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
-          return FadeTransition(
-            opacity: animation.drive(tween),
-            child: child,
-          );
-        },
-      ),
-    );
+            return FadeTransition(
+              opacity: animation.drive(tween),
+              child: child,
+            );
+          },
+        ),
+      );
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
