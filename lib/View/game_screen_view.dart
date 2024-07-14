@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:bomb_game/View/top_screen_view.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'result_screen_view.dart';
 
@@ -64,7 +66,7 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void _navigateToResultScreen() {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => ResultScreen(),
@@ -103,6 +105,7 @@ class _GameScreenState extends State<GameScreen> {
                 onPressed: () {
                   // ゲームを辞めますか？のダイアログを表示
                   showDialog(
+                    barrierDismissible: false,
                     context: context,
                     builder: (context) {
                       return Dialog(
@@ -131,11 +134,11 @@ class _GameScreenState extends State<GameScreen> {
                                   ),
                                 ),
                               ),
-                              const Text(
-                                'タイトル画面に戻りますか？',
-                                style: TextStyle(
-                                  fontSize: 18,
+                              Text(
+                                'ゲームを中断して\nタイトル画面に戻りますか？',
+                                style: GoogleFonts.reggaeOne(
                                   fontWeight: FontWeight.bold,
+                                  fontSize: 20,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -146,35 +149,50 @@ class _GameScreenState extends State<GameScreen> {
                                 children: [
                                   Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5.0),
+                                      padding: const EdgeInsets.all(4.0),
                                       child: ElevatedButton(
                                         onPressed: () {
                                           Navigator.pop(context);
                                         },
-                                        child: const Text('キャンセル'),
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.grey,
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 15),
+                                          backgroundColor: Colors.white,
+                                          side: const BorderSide(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'キャンセル',
+                                          style: GoogleFonts.reggaeOne(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.black,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                   Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5.0),
+                                      padding: const EdgeInsets.all(4.0),
                                       child: ElevatedButton(
                                         onPressed: () {
-                                          Navigator.pop(context);
-                                          Navigator.pop(context);
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    TopScreen()),
+                                          );
                                         },
-                                        child: const Text('終了'),
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.red,
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 15),
+                                        ),
+                                        child: Text(
+                                          '終了',
+                                          style: GoogleFonts.reggaeOne(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -218,7 +236,7 @@ class _GameScreenState extends State<GameScreen> {
                 itemBuilder: (context, index) {
                   return AnimatedOpacity(
                     opacity: buttonPressed[index] ? 0.0 : 1.0,
-                    duration: const Duration(seconds: 1),
+                    duration: const Duration(milliseconds: 100),
                     child: GestureDetector(
                       onTap: buttonPressed[index]
                           ? null
