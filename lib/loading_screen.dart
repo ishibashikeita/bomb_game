@@ -21,7 +21,7 @@ class _LoadingState extends State<Loading> {
 
   Future<void> _loadResources() async {
     // 初回ロード時間
-    await Future.delayed(const Duration(seconds: 10));
+    await Future.delayed(const Duration(seconds: 20));
 
     // アプリバージョンを取得
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -50,33 +50,44 @@ class _LoadingState extends State<Loading> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '※注意書き',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.reggaeOne(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: Colors.red,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                'ゲームには強い光や急激な画面の変化を伴う爆発エフェクトが含まれます。\n光過敏性てんかんをお持ちの方はプレイをお控えください。',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.reggaeOne(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+    return SafeArea(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          image: DecorationImage(
+            fit: BoxFit.fitHeight,
+            image: AssetImage('assets/images/loading_background.png'),
+          ),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '※注意書き',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.reggaeOne(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.red,
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'ゲームには強い光や急激な画面の変化を伴う爆発エフェクトが含まれます。\n光過敏性てんかんをお持ちの方はプレイをお控えください。',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.reggaeOne(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
