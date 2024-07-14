@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:bomb_game/Adsense/adsense_service.dart';
 import 'package:bomb_game/View/top_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +14,7 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
+  final AdsenseService adsenseService = AdsenseService();
   late int gameOverButtonIndex;
   bool isGameOver = false;
   List<bool> buttonPressed = List.filled(25, false);
@@ -21,6 +23,7 @@ class _GameScreenState extends State<GameScreen> {
   void initState() {
     super.initState();
     gameOverButtonIndex = Random().nextInt(25); // 0から24までのランダムな整数
+    adsenseService.initialize();
   }
 
   void _playSound(String sound) async {
@@ -204,6 +207,28 @@ class _GameScreenState extends State<GameScreen> {
                                   ),
                                 ],
                               ),
+                              Container(
+                                margin: const EdgeInsets.all(0),
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(8),
+                                    bottomRight: Radius.circular(8),
+                                  ),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Container(
+                                    margin: const EdgeInsets.only(
+                                        top: 5.12, bottom: 5.12),
+                                    width: 300,
+                                    height: 250,
+                                    child: FittedBox(
+                                      child:
+                                          adsenseService.getRectangleAdWidget(),
+                                    ),
+                                  ),
+                                ),
+                              )
                             ],
                           ),
                         ),
@@ -218,48 +243,60 @@ class _GameScreenState extends State<GameScreen> {
           ],
         ),
         body: SafeArea(
-          child: Center(
-            child: Container(
-              width: size.width,
-              height: size.width,
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.7),
-                image: const DecorationImage(
-                  image: AssetImage('assets/images/danger.png'),
-                  fit: BoxFit.contain,
-                ),
-              ),
-              child: GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(10),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 5,
-                  crossAxisSpacing: 0,
-                  mainAxisSpacing: 0,
-                ),
-                itemCount: 25,
-                itemBuilder: (context, index) {
-                  return AnimatedOpacity(
-                    opacity: buttonPressed[index] ? 0.0 : 1.0,
-                    duration: const Duration(milliseconds: 100),
-                    child: GestureDetector(
-                      onTap: buttonPressed[index]
-                          ? null
-                          : () => _handleButtonPress(index),
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/button.png'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        child: null,
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: Center(
+                  child: Container(
+                    width: size.width,
+                    height: size.width,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      image: const DecorationImage(
+                        image: AssetImage('assets/images/danger.png'),
+                        fit: BoxFit.contain,
                       ),
                     ),
-                  );
-                },
+                    child: GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(10),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 5,
+                        crossAxisSpacing: 0,
+                        mainAxisSpacing: 0,
+                      ),
+                      itemCount: 25,
+                      itemBuilder: (context, index) {
+                        return AnimatedOpacity(
+                          opacity: buttonPressed[index] ? 0.0 : 1.0,
+                          duration: const Duration(milliseconds: 100),
+                          child: GestureDetector(
+                            onTap: buttonPressed[index]
+                                ? null
+                                : () => _handleButtonPress(index),
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('assets/images/button.png'),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              child: null,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
               ),
-            ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: adsenseService.getBannerAdWidget(),
+              ),
+            ],
           ),
         ),
       ),

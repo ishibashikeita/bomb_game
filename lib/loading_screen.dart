@@ -1,3 +1,4 @@
+import 'package:bomb_game/Adsense/adsense_service.dart';
 import 'package:bomb_game/View/game_screen_view.dart';
 import 'package:bomb_game/View/top_screen_view.dart';
 import 'package:bomb_game/const.dart';
@@ -13,6 +14,7 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
+  final AdsenseService adsenseService = AdsenseService();
   @override
   void initState() {
     super.initState();
@@ -20,15 +22,12 @@ class _LoadingState extends State<Loading> {
   }
 
   Future<void> _loadResources() async {
-    // 初回ロード時間
-    await Future.delayed(const Duration(seconds: 20));
-
     // アプリバージョンを取得
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     appVersion = packageInfo.version;
 
     // 広告をロード
-    await Future.delayed(const Duration(seconds: 1));
+    await adsenseService.initialize();
 
     // 画面遷移
     _navigateToNextScreen();
