@@ -292,10 +292,10 @@ class _GameScreenState extends State<GameScreen> {
                   ),
                 ),
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: adsenseService.getBannerAdWidget(),
-              ),
+              // Align(
+              //   alignment: Alignment.bottomCenter,
+              //   child: adsenseService.getBannerAdWidget(),
+              // ),
             ],
           ),
         ),
