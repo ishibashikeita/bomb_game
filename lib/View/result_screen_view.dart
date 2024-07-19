@@ -6,9 +6,12 @@ import 'package:bomb_game/View/top_screen_view.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ResultScreen extends StatefulWidget {
-  const ResultScreen({super.key});
+  ResultScreen({super.key, required this.buttonPressCount});
+
+  int buttonPressCount;
 
   @override
   _ResultScreenState createState() => _ResultScreenState();
@@ -62,7 +65,7 @@ class _ResultScreenState extends State<ResultScreen> {
                   children: [
                     SizedBox(
                       width: size.width,
-                      height: size.height * 0.3,
+                      height: size.height * 0.2,
                       child: Center(
                         child: SizedBox(
                           width: size.width * 0.7,
@@ -70,12 +73,48 @@ class _ResultScreenState extends State<ResultScreen> {
                         ),
                       ),
                     ),
-                    const Text(
-                      'Game Over',
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Container(
+                        width: size.width,
+                        height: size.height * 0.3,
+                        color: Colors.black.withOpacity(0.8),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '押せた回数は',
+                              style: GoogleFonts.reggaeOne(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 40,
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '${widget.buttonPressCount}',
+                                  style: GoogleFonts.reggaeOne(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red,
+                                    fontSize: 60,
+                                  ),
+                                ),
+                                Text(
+                                  '回でした。',
+                                  style: GoogleFonts.reggaeOne(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize: 30,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    Spacer(),
                     Row(
                       children: [
                         Expanded(
@@ -105,6 +144,7 @@ class _ResultScreenState extends State<ResultScreen> {
                             widthFactor: 0.7,
                             child: GestureDetector(
                               onTap: () {
+                                adsenseService.showInterstitialAd();
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -124,10 +164,15 @@ class _ResultScreenState extends State<ResultScreen> {
                           flex: 1,
                           child: FractionallySizedBox(
                             widthFactor: 0.7,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child:
-                                  Image.asset('assets/images/video_button.png'),
+                            child: GestureDetector(
+                              onTap: () {
+                                adsenseService.showRewardedInterstitialAd();
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Image.asset(
+                                    'assets/images/video_button.png'),
+                              ),
                             ),
                           ),
                         ),

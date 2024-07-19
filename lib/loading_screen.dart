@@ -29,6 +29,9 @@ class _LoadingState extends State<Loading> {
     // 広告をロード
     await adsenseService.initialize();
 
+    // 3秒まつ
+    await Future.delayed(const Duration(seconds: 2));
+
     // 画面遷移
     _navigateToNextScreen();
   }

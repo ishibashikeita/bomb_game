@@ -18,6 +18,8 @@ class _GameScreenState extends State<GameScreen> {
   late int gameOverButtonIndex;
   bool isGameOver = false;
   List<bool> buttonPressed = List.filled(25, false);
+  List<bool> buttonTappedDown = List.filled(25, false);
+  int buttonPressCount = 0;
 
   @override
   void initState() {
@@ -43,6 +45,7 @@ class _GameScreenState extends State<GameScreen> {
     } else {
       setState(() {
         buttonPressed[index] = true;
+        buttonPressCount++;
       });
       _playSound('sounds/button_click.mp3'); // 通常ボタン押下時の効果音再生
     }
@@ -74,7 +77,7 @@ class _GameScreenState extends State<GameScreen> {
         context,
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
-              ResultScreen(),
+              ResultScreen(buttonPressCount: buttonPressCount),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             var begin = 0.0;
             var end = 1.0;
@@ -184,6 +187,7 @@ class _GameScreenState extends State<GameScreen> {
                                       padding: const EdgeInsets.all(4.0),
                                       child: ElevatedButton(
                                         onPressed: () {
+                                          adsenseService.disposeBannerAd();
                                           Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
@@ -273,13 +277,34 @@ class _GameScreenState extends State<GameScreen> {
                           opacity: buttonPressed[index] ? 0.0 : 1.0,
                           duration: const Duration(milliseconds: 100),
                           child: GestureDetector(
-                            onTap: buttonPressed[index]
-                                ? null
-                                : () => _handleButtonPress(index),
+                            onTapDown: (details) {
+                              setState(() {
+                                buttonTappedDown[index] = true;
+                              });
+                            },
+                            onTapUp: (details) {
+                              setState(() {
+                                buttonTappedDown[index] = false;
+                              });
+                              if (!buttonPressed[index]) {
+                                _handleButtonPress(index);
+                              }
+                            },
+                            onTapCancel: () {
+                              setState(() {
+                                buttonTappedDown[index] = false;
+                              });
+                            },
                             child: Container(
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 image: DecorationImage(
-                                  image: AssetImage('assets/images/button.png'),
+                                  colorFilter: buttonTappedDown[index]
+                                      ? const ColorFilter.mode(
+                                          Colors.grey, BlendMode.modulate)
+                                      : null,
+                                  image: const AssetImage(
+                                    'assets/images/button.png',
+                                  ),
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -292,10 +317,10 @@ class _GameScreenState extends State<GameScreen> {
                   ),
                 ),
               ),
-              // Align(
-              //   alignment: Alignment.bottomCenter,
-              //   child: adsenseService.getBannerAdWidget(),
-              // ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: adsenseService.getBannerAdWidget(),
+              ),
             ],
           ),
         ),

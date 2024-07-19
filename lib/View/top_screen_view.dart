@@ -4,6 +4,8 @@ import 'package:bomb_game/const.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../Adsense/adsense_service.dart';
+
 class TopScreen extends StatefulWidget {
   const TopScreen({super.key});
 
@@ -12,6 +14,7 @@ class TopScreen extends StatefulWidget {
 }
 
 class _TopScreenState extends State<TopScreen> {
+  final AdsenseService adsenseService = AdsenseService();
   late AudioPlayer _bgmPlayer;
   late AudioPlayer _sfxPlayer;
   bool _isNavigating = false; // フラグを追加
@@ -22,6 +25,7 @@ class _TopScreenState extends State<TopScreen> {
     _bgmPlayer = AudioPlayer();
     _sfxPlayer = AudioPlayer();
     _playBGM();
+    adsenseService.initialize();
   }
 
   @override
@@ -108,6 +112,7 @@ class _TopScreenState extends State<TopScreen> {
                   setState(() {
                     _isNavigating = true; // フラグを設定
                   });
+                  adsenseService.disposeBannerAd();
                   _playButtonClickSound();
                   await Future.delayed(
                       Duration(milliseconds: 300)); // 効果音が鳴るのを待つ
@@ -153,6 +158,10 @@ class _TopScreenState extends State<TopScreen> {
                     ),
                   ),
                 ),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: adsenseService.getBannerAdWidget(),
               ),
             ],
           ),
