@@ -28,6 +28,8 @@
 	<string>ca-app-pub-8594832520315352~9627747733</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>表示する広告を適切に選択するために使用します。</string>
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict>
@@ -248,7 +250,5 @@
 	</array>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
-	 <key>NSUserTrackingUsageDescription</key>
-    <string>表示する広告を適切に選択するために使用します。</string>
 </dict>
 </plist>
