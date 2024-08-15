@@ -19,6 +19,9 @@ dependencies:
   confetti: ^0.7.0
   google_mobile_ads: ^5.1.0
   flutter_launcher_icons: ^0.13.1
+  flutter_hooks: ^0.20.5
+  app_tracking_transparency: ^2.0.6
+  in_app_review: ^2.0.9
 
 dev_dependencies:
   flutter_test:

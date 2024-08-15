@@ -3,6 +3,7 @@ import 'package:bomb_game/View/game_screen_view.dart';
 import 'package:bomb_game/const.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 import '../Adsense/adsense_service.dart';
 
@@ -14,7 +15,6 @@ class TopScreen extends StatefulWidget {
 }
 
 class _TopScreenState extends State<TopScreen> {
-  final AdsenseService adsenseService = AdsenseService();
   late AudioPlayer _bgmPlayer;
   late AudioPlayer _sfxPlayer;
   bool _isNavigating = false; // フラグを追加
@@ -25,7 +25,6 @@ class _TopScreenState extends State<TopScreen> {
     _bgmPlayer = AudioPlayer();
     _sfxPlayer = AudioPlayer();
     _playBGM();
-    adsenseService.initialize();
   }
 
   @override
@@ -62,108 +61,117 @@ class _TopScreenState extends State<TopScreen> {
             image: AssetImage('assets/images/top_background.png'),
           ),
         ),
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Stack(
-            children: [
-              Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  height: size.height * 0.1,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        color: Colors.white.withOpacity(0.7),
-                        width: size.width * 0.3,
-                        height: 30,
-                        child: Center(
-                          child: Text(
-                            'v${appVersion}',
-                            style: GoogleFonts.reggaeOne(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                color: Colors.black),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          // レビューへ
-                        },
-                        child: Container(
-                          color: Colors.white.withOpacity(0.7),
-                          width: 50,
-                          height: 50,
-                          child: const Icon(
-                            Icons.storefront_sharp,
-                            size: 35,
-                            color: Colors.black,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () async {
-                  if (_isNavigating) return; // フラグをチェック
-                  setState(() {
-                    _isNavigating = true; // フラグを設定
-                  });
-                  adsenseService.disposeBannerAd();
-                  _playButtonClickSound();
-                  await Future.delayed(
-                      Duration(milliseconds: 300)); // 効果音が鳴るのを待つ
-                  _stopBGM();
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => GameScreen(),
-                    ),
-                  ).then((_) {
-                    setState(() {
-                      _isNavigating = false; // フラグをリセット
-                    });
-                  });
-                },
-                child: Align(
-                  alignment: Alignment.center,
-                  child: SizedBox(
-                    width: size.width,
-                    height: size.width * 1.5,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+        child: WillPopScope(
+          onWillPop: () async => false,
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    height: size.height * 0.1,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        SizedBox(
-                          height: size.width * 0.7,
-                          child: Image.asset('assets/images/title_logo.png'),
-                        ),
-                        SizedBox(
+                        Container(
+                          color: Colors.white.withOpacity(0.7),
                           width: size.width * 0.3,
-                          height: size.width * 0.3,
-                          child: FittedBox(
-                            fit: BoxFit.contain,
-                            child:
-                                Image.asset('assets/images/title_button.png'),
+                          height: 30,
+                          child: Center(
+                            child: Text(
+                              'v${appVersion}',
+                              style: GoogleFonts.reggaeOne(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.black),
+                            ),
                           ),
                         ),
-                        SizedBox(
-                          height: size.width * 0.2,
-                          child:
-                              Image.asset('assets/animations/top_to_start.gif'),
-                        ),
+                        GestureDetector(
+                          onTap: () async {
+                            final InAppReview inAppReview =
+                                InAppReview.instance;
+                            if (await inAppReview.isAvailable()) {
+                              inAppReview.openStoreListing(
+                                appStoreId: '6544787528',
+                              );
+                            }
+                          },
+                          child: Container(
+                            color: Colors.white.withOpacity(0.7),
+                            width: 50,
+                            height: 50,
+                            child: const Icon(
+                              Icons.storefront_sharp,
+                              size: 35,
+                              color: Colors.black,
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),
                 ),
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: adsenseService.getBannerAdWidget(),
-              ),
-            ],
+                GestureDetector(
+                  onTap: () async {
+                    if (_isNavigating) return; // フラグをチェック
+                    setState(() {
+                      _isNavigating = true; // フラグを設定
+                    });
+
+                    _playButtonClickSound();
+                    await Future.delayed(
+                        Duration(milliseconds: 300)); // 効果音が鳴るのを待つ
+                    _stopBGM();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GameScreen(),
+                      ),
+                    ).then((_) {
+                      setState(() {
+                        _isNavigating = false; // フラグをリセット
+                      });
+                    });
+                  },
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: SizedBox(
+                      width: size.width,
+                      height: size.width * 1.5,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: size.width * 0.7,
+                            child: Image.asset('assets/images/title_logo.png'),
+                          ),
+                          SizedBox(
+                            width: size.width * 0.3,
+                            height: size.width * 0.3,
+                            child: FittedBox(
+                              fit: BoxFit.contain,
+                              child:
+                                  Image.asset('assets/images/title_button.png'),
+                            ),
+                          ),
+                          SizedBox(
+                            height: size.width * 0.2,
+                            child: Image.asset(
+                                'assets/animations/top_to_start.gif'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: AdsenseService.showBanner(),
+                ),
+              ],
+            ),
           ),
         ),
       ),

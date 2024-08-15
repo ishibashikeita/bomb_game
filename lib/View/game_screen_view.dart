@@ -4,6 +4,7 @@ import 'package:bomb_game/Adsense/adsense_service.dart';
 import 'package:bomb_game/View/top_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'result_screen_view.dart';
 
 class GameScreen extends StatefulWidget {
@@ -14,7 +15,6 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
-  final AdsenseService adsenseService = AdsenseService();
   late int gameOverButtonIndex;
   bool isGameOver = false;
   List<bool> buttonPressed = List.filled(25, false);
@@ -25,7 +25,6 @@ class _GameScreenState extends State<GameScreen> {
   void initState() {
     super.initState();
     gameOverButtonIndex = Random().nextInt(25); // 0から24までのランダムな整数
-    adsenseService.initialize();
   }
 
   void _playSound(String sound) async {
@@ -107,221 +106,224 @@ class _GameScreenState extends State<GameScreen> {
             image: AssetImage('assets/images/game_background.png'),
             fit: BoxFit.cover),
       ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.black54,
-          actions: [
-            IconButton(
-                onPressed: () {
-                  // ゲームを辞めますか？のダイアログを表示
-                  showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (context) {
-                      return Dialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        surfaceTintColor: Colors.white,
-                        backgroundColor: Colors.white,
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  padding: const EdgeInsets.all(10),
-                                  child: const Icon(
-                                    Icons.warning,
-                                    color: Colors.white,
-                                    size: 50,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                'ゲームを中断して\nタイトル画面に戻りますか？',
-                                style: GoogleFonts.reggaeOne(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.white,
-                                          side: const BorderSide(
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          'キャンセル',
-                                          style: GoogleFonts.reggaeOne(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          adsenseService.disposeBannerAd();
-                                          Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    TopScreen()),
-                                          );
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.red,
-                                        ),
-                                        child: Text(
-                                          '終了',
-                                          style: GoogleFonts.reggaeOne(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Container(
-                                margin: const EdgeInsets.all(0),
-                                decoration: const BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(8),
-                                    bottomRight: Radius.circular(8),
-                                  ),
-                                ),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Container(
-                                    margin: const EdgeInsets.only(
-                                        top: 5.12, bottom: 5.12),
-                                    width: 300,
-                                    height: 250,
-                                    child: FittedBox(
-                                      child:
-                                          adsenseService.getRectangleAdWidget(),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
+      child: WillPopScope(
+        onWillPop: () async => false,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.black54,
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    // ゲームを辞めますか？のダイアログを表示
+                    showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
                           ),
-                        ),
-                      );
-                    },
-                  );
-                },
-                icon: const Icon(
-                  Icons.pause,
-                  color: Colors.white,
-                ))
-          ],
-        ),
-        body: SafeArea(
-          child: Stack(
-            children: [
-              Align(
-                alignment: Alignment.center,
-                child: Center(
-                  child: Container(
-                    width: size.width,
-                    height: size.width,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.7),
-                      image: const DecorationImage(
-                        image: AssetImage('assets/images/danger.png'),
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    child: GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.all(10),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 5,
-                        crossAxisSpacing: 0,
-                        mainAxisSpacing: 0,
-                      ),
-                      itemCount: 25,
-                      itemBuilder: (context, index) {
-                        return AnimatedOpacity(
-                          opacity: buttonPressed[index] ? 0.0 : 1.0,
-                          duration: const Duration(milliseconds: 100),
-                          child: GestureDetector(
-                            onTapDown: (details) {
-                              setState(() {
-                                buttonTappedDown[index] = true;
-                              });
-                            },
-                            onTapUp: (details) {
-                              setState(() {
-                                buttonTappedDown[index] = false;
-                              });
-                              if (!buttonPressed[index]) {
-                                _handleButtonPress(index);
-                              }
-                            },
-                            onTapCancel: () {
-                              setState(() {
-                                buttonTappedDown[index] = false;
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  colorFilter: buttonTappedDown[index]
-                                      ? const ColorFilter.mode(
-                                          Colors.grey, BlendMode.modulate)
-                                      : null,
-                                  image: const AssetImage(
-                                    'assets/images/button.png',
+                          surfaceTintColor: Colors.white,
+                          backgroundColor: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                    padding: const EdgeInsets.all(10),
+                                    child: const Icon(
+                                      Icons.warning,
+                                      color: Colors.white,
+                                      size: 50,
+                                    ),
                                   ),
-                                  fit: BoxFit.cover,
                                 ),
-                              ),
-                              child: null,
+                                Text(
+                                  'ゲームを中断して\nタイトル画面に戻りますか？',
+                                  style: GoogleFonts.reggaeOne(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.white,
+                                            side: const BorderSide(
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'キャンセル',
+                                            style: GoogleFonts.reggaeOne(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            AdsenseService
+                                                .showInterstitialVideo();
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      TopScreen()),
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.red,
+                                          ),
+                                          child: Text(
+                                            '終了',
+                                            style: GoogleFonts.reggaeOne(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.all(0),
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(8),
+                                      bottomRight: Radius.circular(8),
+                                    ),
+                                  ),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Container(
+                                      margin: const EdgeInsets.only(
+                                          top: 5.12, bottom: 5.12),
+                                      width: 300,
+                                      height: 250,
+                                      child: FittedBox(
+                                        child: AdsenseService.showRectangle(),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                         );
                       },
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.pause,
+                    color: Colors.white,
+                  ))
+            ],
+          ),
+          body: SafeArea(
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: Center(
+                    child: Container(
+                      width: size.width,
+                      height: size.width,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.7),
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/danger.png'),
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      child: GridView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(10),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 5,
+                          crossAxisSpacing: 0,
+                          mainAxisSpacing: 0,
+                        ),
+                        itemCount: 25,
+                        itemBuilder: (context, index) {
+                          return AnimatedOpacity(
+                            opacity: buttonPressed[index] ? 0.0 : 1.0,
+                            duration: const Duration(milliseconds: 100),
+                            child: GestureDetector(
+                              onTapDown: (details) {
+                                setState(() {
+                                  buttonTappedDown[index] = true;
+                                });
+                              },
+                              onTapUp: (details) {
+                                setState(() {
+                                  buttonTappedDown[index] = false;
+                                });
+                                if (!buttonPressed[index]) {
+                                  _handleButtonPress(index);
+                                }
+                              },
+                              onTapCancel: () {
+                                setState(() {
+                                  buttonTappedDown[index] = false;
+                                });
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    colorFilter: buttonTappedDown[index]
+                                        ? const ColorFilter.mode(
+                                            Colors.grey, BlendMode.modulate)
+                                        : null,
+                                    image: const AssetImage(
+                                      'assets/images/button.png',
+                                    ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                child: null,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: adsenseService.getBannerAdWidget(),
-              ),
-            ],
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: AdsenseService.showBanner(),
+                ),
+              ],
+            ),
           ),
         ),
       ),
