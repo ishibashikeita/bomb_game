@@ -170,6 +170,12 @@ class _ResultScreenState extends State<ResultScreen> {
                               child: GestureDetector(
                                 onTap: () {
                                   AdsenseService.showRewardedVideo();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => GameScreen(),
+                                    ),
+                                  );
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
