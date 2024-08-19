@@ -42,7 +42,7 @@ class _LoadingState extends State<Loading> {
   Future<void> initPlugin() async {
     final status = await AppTrackingTransparency.trackingAuthorizationStatus;
     if (status == TrackingStatus.notDetermined) {
-      await Future.delayed(const Duration(milliseconds: 200));
+      await Future.delayed(const Duration(seconds: 1));
       await AppTrackingTransparency.requestTrackingAuthorization();
     }
   }
