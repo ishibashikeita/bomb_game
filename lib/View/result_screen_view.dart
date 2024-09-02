@@ -114,6 +114,36 @@ class _ResultScreenState extends State<ResultScreen> {
                                   ),
                                 ],
                               ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    '動画を視聴すると爆弾が',
+                                    style: GoogleFonts.reggaeOne(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  Text(
+                                    '2倍',
+                                    style: GoogleFonts.reggaeOne(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.greenAccent,
+                                      fontSize: 26,
+                                    ),
+                                  ),
+                                  Text(
+                                    'に！？',
+                                    style: GoogleFonts.reggaeOne(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ),
@@ -173,7 +203,9 @@ class _ResultScreenState extends State<ResultScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => GameScreen(),
+                                      builder: (context) => GameScreen(
+                                        isReward: true,
+                                      ),
                                     ),
                                   );
                                 },

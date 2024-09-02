@@ -8,14 +8,18 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'result_screen_view.dart';
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key});
+  GameScreen({
+    super.key,
+    this.isReward = false,
+  });
+  bool isReward;
 
   @override
   _GameScreenState createState() => _GameScreenState();
 }
 
 class _GameScreenState extends State<GameScreen> {
-  late int gameOverButtonIndex;
+  late List<int> gameOverButtonIndexes;
   bool isGameOver = false;
   List<bool> buttonPressed = List.filled(25, false);
   List<bool> buttonTappedDown = List.filled(25, false);
@@ -24,7 +28,17 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void initState() {
     super.initState();
-    gameOverButtonIndex = Random().nextInt(25); // 0から24までのランダムな整数
+    _setupGameOverButtons();
+  }
+
+  void _setupGameOverButtons() {
+    if (widget.isReward) {
+      // isRewardがtrueの場合、2つの爆弾をランダムに配置
+      gameOverButtonIndexes = List.generate(2, (_) => Random().nextInt(25));
+    } else {
+      // isRewardがfalseの場合、1つの爆弾をランダムに配置
+      gameOverButtonIndexes = [Random().nextInt(25)];
+    }
   }
 
   void _playSound(String sound) async {
@@ -35,7 +49,7 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void _handleButtonPress(int index) {
-    if (index == gameOverButtonIndex) {
+    if (gameOverButtonIndexes.contains(index)) {
       setState(() {
         isGameOver = true;
       });
